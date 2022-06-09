@@ -18,5 +18,5 @@ The companion package $Families$ extract family relationships from the multi-gen
 
 You should be able to install VirtualPop using the following R code: 
 
-library(devtools)
-devtools::install_github("willekens/VirtualPop")
+        library(devtools)
+        devtools::install_github("willekens/VirtualPop")
