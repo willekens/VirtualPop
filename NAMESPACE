@@ -1,0 +1,7 @@
+import ("msm","HMDHFDplus")
+importFrom("stats", "aggregate", "rbinom", "runif", "uniroot")
+importFrom("utils", "str")
+
+export("r.pw_exp")
+export("H_pw","pw_root","Children", "GetData","GetGenerations")
+export ("GetRates","Sim_bio","Partnership","Lifespan")

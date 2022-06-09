@@ -1,0 +1,58 @@
+\name{GetGenerations}
+\alias{GetGenerations}
+\title{Creates Database 'dataLH' from Mortality Rates and Fertility Rates}
+\usage{
+GetGenerations(
+  rates,
+  ncohort,
+  ngen,
+  age_end_perc = NULL,
+  iages = NULL,
+  ID1 = NULL
+)
+}
+\arguments{
+\item{rates}{List object with death rates (ASDR) and birth rates (ASFR)}
+
+\item{ncohort}{Size of hypothetical birth cohort}
+
+\item{ngen}{Number of generations to be simulated}
+
+\item{age_end_perc}{If age_end_perc is not missing (NULL), then the
+simulated ages at death are replaced by the age distribution given by
+age_end_perc. The age distribution is a matrix with 2 dolumns, one for
+females (column 1) and one for males (column 2). The distribution is given
+by single years of age.}
+
+\item{iages}{If iages is not missing, the vector of simulated ages at death
+is replaced by the vector of individual ages at censoring}
+
+\item{ID1}{Identification number of first person in virtual population being
+created (optional)}
+}
+\value{
+\item{dataLH}{The database of simulated individual lifespans and
+fertility histories. The object 'dataLH' has two attributes: (a) the
+calendar year of period rates and (b) the country}
+}
+\description{
+Creates database 'dataLH' from mortality rates by age and sex, and fertility
+rates by age of mother and birth order
+}
+\details{
+age_end_prec or iages are used to simulate ages at censoring. For instance,
+to compare the virtual population with a real population for which
+information is collected retorspectively in a cross-sectional survey, the
+simulation window must be equal to the observation window. In other words,
+the virtual population and the real population must have the same censoring.
+}
+\examples{
+
+# The object rates is produced by the function GetRates.
+data(rates)
+dataLH <- GetGenerations (rates=rates,ncohort=100,ngen=4)
+
+}
+\author{
+Frans Willekens
+}

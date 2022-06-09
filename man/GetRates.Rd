@@ -1,0 +1,41 @@
+\name{GetRates}
+\alias{GetRates}
+\title{Retrieves Data from HMD and HFD for a Selected Country (All Years)}
+\usage{
+GetRates(data, refyear)
+}
+\arguments{
+\item{data}{data}
+
+\item{refyear}{Reference year, which is the year of period data}
+}
+\value{
+\item{ASDR}{Age-specific death rates, by sex (for reference year or
+all years)} \item{ASFR}{Age-specific birth rates by birth order (for
+reference year or all years)} \item{e0}{REMOVE}
+}
+\description{
+(a) Retrieves rates, the period life tables and the period fertility tables.
+(b) Computes death rates by age and sex, and birth rates by age and birth
+order.
+}
+\details{
+The user needs to register as a new user before data can be downloaded. To
+register with HMD, go to https://www.mortality.org. To register with HFD, go
+to https://www.humanfertility.org/cgi-bin/main.php.
+}
+\note{
+To access the HMD and HFD, the function used HMDHFDplus written by Tim
+Riffe and other at the Max Planck Institute for Demographic Research,
+Rostock, Germany
+}
+\examples{
+
+## Not run:
+## ratesR <- GetRates(data,refyear)
+## End (Not run)
+
+}
+\author{
+Frans Willekens
+}

@@ -1,0 +1,36 @@
+\name{Sim_bio}
+\alias{Sim_bio}
+\title{Generic Function to Generate Single Life History}
+\usage{
+Sim_bio(datsim, ratesM)
+}
+\arguments{
+\item{datsim}{Data frame with individual data}
+
+\item{ratesM}{Multistate transition rates in standard (multistate) format}
+}
+\value{
+\item{age_startSim}{Age at start of simulation}
+\item{age_endSim}{Age at end of simulation} \item{nstates}{Number of states}
+\item{path}{path: sequence of states occupied} \item{ages_trans}{Ages at
+transition}
+}
+\description{
+The function is called from the function Children. It uses the rpexp
+function of the msm package.
+}
+\examples{
+
+  # Generates single fertility history from mortality rates by age 
+  # and fertility rates by age and parity
+  # Fertily history is simulated from starting age to ending age
+  # Individual starts in state "par0"
+  # ratesM is an object with the rates in the proper format for multistate analysis
+  data(rates)
+  popsim <- data.frame(ID=1,born=2000.450,start=0,end=80,st_start="par0")
+  ch <- Sim_bio (datsim=popsim,ratesM=rates$ratesM) 
+
+}
+\author{
+Frans Willekens
+}

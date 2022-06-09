@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Frans Willekens" />
+
+<meta name="date" content="2022-06-08" />
+
+<title>Simulation of life histories</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Simulation of life histories</h1>
+<h4 class="author">Frans Willekens</h4>
+<h4 class="date">2022-06-08</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The life course or life history is conceptualized as a sequence of
+states and transitions between states. A state is a personal attribute,
+e.g. marital status or number of children ever born, or a combination of
+personal attributes. The set of possible states is the state space. It
+is the set of possible values of a personal attribute or combination of
+attributes. An individual’s life history depends on several factors,
+including individual characteristics, social context and personal
+experiences. In this paper, the influencing factors are limited to
+personal characteristics. The individual life history is modelled as a
+multistate stochastic process. The transitions the individual
+experiences and the states occupied after the transitions depend on
+personal characteristics and chance. The parameters of the multistate
+process are transition rates that vary with age (and covariates). They
+are estimated from empirical data. Parameter estimators are obtained by
+combining data from different individuals. As a result, the individual
+life history generated by the model is <em>synthetic</em>. Individuals
+are virtual individuals and the population is a virtual population.</p>
+<p>The vignette consists of ?? sections. Section 2 is a brief review of
+the theory of multistate modelling. Section 3 presents an application.
+Fertility histories of women in the United States are simulated using
+data from the Human Fertility Database (HFD) (www.humanfertility.org)
+and the Human Mortality Database (HMD) (www.mortality.org). Individuals
+with identical characteristics have different life histories due to
+random factors. <span class="math inline">\(VirtualPop\)</span> has
+several vignettes. To list the vignettes, use <span class="math inline">\(browseVignettes(&quot;VirtualPop&quot;)\)</span>
+and to see the code, use <span class="math inline">\(edit(vignette(x))\)</span>.</p>
+</div>
+<div id="theoretical-background-simulating-life-histories" class="section level2">
+<h2>Theoretical background: simulating life histories</h2>
+<p>Let <span class="math inline">\(_kY(x)\)</span> denote the state
+individual k occupies at age x. <span class="math inline">\(_kY(x)\)</span> is a discrete random variable, a
+Bernoulli random variable if r=2 and a multinomial random variable if
+r&gt;2. The probability that k is in state i at age x is the <em>state
+probability</em> <span class="math inline">\(_kp_i(x)=Pr \left[ _kY(x) =
+i\right]\)</span>, with <span class="math inline">\(\sum_{i=1}^{r}
+{_kp_i(x)=1}\)</span>. The probability that k is in state i at age x and
+in state j at age <span class="math inline">\(x+\tau\)</span> is the
+joint probability</p>
+<p><span class="math display">\[\begin{align}
+Pr \left[ _kY(x) = i,\text{ } _kY(x+\tau) = j \right]
+\tag{1}
+\end{align}\]</span></p>
+<p>The probability is the product of the probability that k is in i at x
+and the conditional probability that k is in j at <span class="math inline">\(x+\tau\)</span>, provided k is in i at x:</p>
+<p><span class="math display">\[\begin{align}
+Pr \left[ _kY (x)=i,_kY(x+\tau)=j \right]  = Pr \left [ _kY(x+\tau)=j
+|_kY(x)=i \right]  Pr \left[_kY(x)=i \right]
+\tag{2}
+\end{align}\]</span></p>
+<p>The conditional probability is the <em>transition probability</em>
+and is denoted by <span class="math inline">\(_kp_{j|i}(x,x+\tau)\)</span>, which is more
+conveniently written as <span class="math inline">\(_kp_{ij}(x,x+\tau)\)</span> and, if <span class="math inline">\(\tau=1\)</span>, it is also written as <span class="math inline">\(_kp_{ij}(x)\)</span>. The probability that k is in
+j at <span class="math inline">\(x+\tau\)</span> is</p>
+<p><span class="math display">\[\begin{align}
+_kp_j(x+\tau)=\sum_{i=1}^{r} {_kp_{ij}(x,x+\tau)} {_kp_i(x)}
+\end{align}\]</span></p>
+<p>which is known as <em>state equation</em>. It expresses the state
+probability at <span class="math inline">\(x+\tau\)</span> in terms of
+the state probabilities at x and the transition probabilities.</p>
+<p>State probabilities may be combined in a state vector <span class="math inline">\(_k\mathbf{S}(x)\)</span> and transition
+probabilities in the transition matrix <span class="math inline">\(_k{\mathbf{P}}(x,x+\tau)\)</span>:</p>
+<p><span class="math display">\[\begin{align}
+_k{\mathbf{P}}(x,x+\tau)=   
+\begin{bmatrix}
+\text{ }_k p_{11}(x) &amp; _k p_{12}(x) &amp; \cdots &amp; _k p_{1r}(x)
+\\
+_k p_{21}(x) &amp; \text{ }_k p_{22}(x) &amp; \cdots &amp; _k p_{2r}(x)
+\\
+\vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+_k p_{r1}(x) &amp; _k p_{r2}(x) &amp; \cdots &amp; \text{ }_k p_{rr}(x)
+\end{bmatrix}
+\tag{3}
+\end{align}\]</span> where <span class="math inline">\(p_{ii}(\tau)=1 -
+\sum_{j \ne i}{} _k p_{ij} (\tau)\)</span>.</p>
+<p>The element <span class="math inline">\(_k p_{ij} (x,x+\tau)\)</span>
+denotes the probability that k who resides in location i at age x
+resides in j at age <span class="math inline">\(x+\tau\)</span>. The
+diagonal element <span class="math inline">\(_kp_{ii}
+(x,x+\tau)\)</span> is the probability that k, who is in i at x, is also
+in i at <span class="math inline">\(x+\tau\)</span>. It does not imply
+that k stays in i from x to <span class="math inline">\(x+\tau\)</span>
+on a continuous basis. Multiple transitions are allowed during the
+interval <span class="math inline">\((x,x+\tau)\)</span>.</p>
+<p>The state vector at <span class="math inline">\(x+\tau\)</span>
+is</p>
+<p><span class="math display">\[\begin{align}
+_k\mathbf{S}(x+\tau)=\left[ _k \mathbf{P}(x,x+\tau \right]&#39; \text{
+}_k\mathbf{S}(x)
+\tag{4}
+\end{align}\]</span></p>
+<p>where<span class="math inline">\(_k\mathbf{S}(t)\)</span> is a column
+vector and ’ denotes transpose. This matrix expression is a fundamental
+equation in multistate modelling. In this vignette, the state equation
+is specified at the individual level. The transition probabilities of an
+individual of age x depend on personal attributes at x, the history of
+attributes, and contextual factors. In this vignette, the dependencies
+are restricted.</p>
+<p>If <span class="math inline">\(\tau\)</span> is small and tends to
+zero, <span class="math display">\[\begin{align}
+\frac{1}{\tau} \displaystyle \lim_{\tau \to 0} Pr \left[_kY(x+\tau)=j |
+_kY(x)=i  \right]= \text{ }_k \mu_{ij}(x)
+\end{align}\]</span> is the instantaneous rate of transition
+(<em>transition intensity</em>) at age x. Multistate models are fully
+specified by their transition intensities. If the instantaneous
+transition rates are independent of the history of k, the stochastic
+process governed by the transition intensities is a <em>continuous-time
+Markov process</em>. A common assumption in demography is that <span class="math inline">\(_k \mu_{ij}(x)\)</span> is piecewise constant
+(e.g. age-specific rates).</p>
+<p>The instantaneous transition rates are combined in a transition rate
+matrix: <span class="math display">\[\begin{align}
+_k\mathbf{\mu}(x)=
+  \begin{bmatrix}
+\text{ }_k\mu_{11}(x) &amp; -_k\mu_{12}(x) &amp; \cdots &amp;
+-_k\mu_{1r}(x) \\
+-_k\mu_{21}(x) &amp; \text{ }_k\mu_{22}(x) &amp; \cdots &amp;
+-_k\mu_{2r}(x) \\
+\vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+-_k\mu_{r1}(x) &amp; -_k\mu_{r2}(x) &amp; \cdots &amp; \text{
+}_k\mu_{rr}(x)
+\end{bmatrix}
+\tag{5}
+\end{align}\]</span> where <span class="math inline">\(\mu_{ii}(\tau)=\sum_{j=i}{} _k \mu_{ij}
+(\tau)\)</span>.</p>
+<p>The cumulative transition rate during the age interval from 0 to x is
+the cumulative hazard: <span class="math display">\[\begin{align}
+_k\Lambda_{ij}(x)=\int_{0}^{x} {_k\mu_{ij}(x)}
+\tag{6}
+\end{align}\]</span></p>
+<p>The formulation assumes that, throughout the interval from 0 to x,
+individual k may enter any state j from any state i unless <span class="math inline">\(_k \mu_{ij}(\tau)\)</span> is zero. A state that
+can be entered and left is a transient state, while a state that can be
+entered but not left is an absorbing state. To be able to move from i to
+j at time <span class="math inline">\(\tau\)</span>, i.e. during the
+small interval from <span class="math inline">\(\tau\)</span> to <span class="math inline">\(\tau+d\tau\)</span>, individual k must be in i at
+age <span class="math inline">\(\tau\)</span>. The current state
+occupied determines possible destination states. The state k occupies at
+<span class="math inline">\(\tau\)</span> is determined endogenously,
+i.e. by the model. Individual k is in i at age <span class="math inline">\(\tau\)</span> and at risk of a transition to j if
+<span class="math inline">\(_kY(\tau)=i\)</span>. Let <span class="math inline">\(_kY_i(\tau)\)</span> be an indicator variable
+which is one if k is in i at <span class="math inline">\(\tau\)</span>
+and zero otherwise:<span class="math inline">\(_kY_i(\tau)=I((_kY(\tau)=i)\)</span>. The quantity
+<span class="math inline">\(_kY_i(\tau) d\tau\)</span> is the time k
+spends in i during the interval <span class="math inline">\((\tau,\tau+d\tau)\)</span>. It is also the
+duration of exposure to the risk (duration at risk) of leaving i. The
+total duration of exposure before age x is <span class="math inline">\(\int_{0}^{x} {_kY_i(\tau) d\tau}\)</span>. It is
+the duration of stay on i between 0 and x. The stay does not need to be
+on a continuous basis. Individual k may leave i and return to i between
+ages 0 and x. The transition intensity at age x is the product of the
+instantaneous transition rate and the indicator variable:</p>
+<p><span class="math display">\[\begin{align}
+_k\lambda_{ij}(\tau) = _k\mu_{ij}(\tau) _kY_i(\tau)
+\tag{7}
+\end{align}\]</span> The function <span class="math inline">\(_k
+\mu_{ij}(\tau)\)</span> is the hazard function, <span class="math inline">\(_kY_i(\tau)\)</span> the exposure function and
+<span class="math inline">\(_k\lambda_{ij}(\tau)\)</span> the
+<em>intensity function</em> <span class="citation">(Aalen et al. 2008,
+p. 31; Cook and Lawless 2018, p. 29)</span>. The expression <span class="math inline">\(_k\mu_{ij}(\tau) d \tau\)</span> is the
+probability that a transition occurs during the interval <span class="math inline">\((\tau,\tau+d\tau)\)</span>, provided k is at risk
+of experiencing the transition; <span class="math inline">\(_kY_i(\tau)
+d\tau\)</span> is the duration of exposure during the interval <span class="math inline">\((\tau,\tau+d\tau)\)</span>; and <span class="math inline">\(_k\lambda_{ij}(\tau) d\tau\)</span> is the
+expected number of transitions from i to j by individual k during the
+interval <span class="math inline">\((\tau,\tau+d\tau)\)</span>. The
+integral <span class="math inline">\(\int_{0}^{x} {_k\lambda_{ij}(\tau)
+d\tau}\)</span> is the expected number of (i,j)-transitions between ages
+0 and x. It is denoted by <span class="math inline">\(_kN_{ij}(x)\)</span>. The sequence of random
+variables <span class="math inline">\(\{ {_kN_{ij}(\tau); 0 \le \tau \le
+x}\}\)</span> is a <em>counting process</em> <span class="citation">(Aalen et al. 2008, p. 25)</span>. The presentation of
+life history processes as counting processes is a logical approach in
+demography because event occurrences are related to exposures. <span class="citation">Willekens (2014)</span> adopts the counting process
+perspective in multistate demographic modelling. Notice that the
+cumulative hazard <span class="math inline">\(_k\Lambda_{ij}(x)\)</span>
+may also be interpreted as an expected number of transitions between
+ages 0 and x. It is the expected number, provided individual k remains
+at risk of an (i,j)-transition during the entire period from 0 to x. If
+during the interval from 0 to x, individual k is at risk during the
+subinterval from <span class="math inline">\(x_1\)</span> to <span class="math inline">\(x_2\)</span> with <span class="math inline">\(0
+\le x_1,x_2 \le x\)</span>, then the cumulative hazard may be written
+as</p>
+<p><span class="math display">\[\begin{align}
+_k\Lambda_{ij}(x_1,x_2)=\int_{x_1}^{x_2} {_k \mu_{ij}(\tau) d\tau}
+=\int_{x_1}^{x_2} {_k \mu_{ij}(\tau)_kY_i(\tau) d\tau} =\int_{x_1}^{x_2}
+{_k \lambda_{ij}(\tau) d\tau }
+\tag{8}
+\end{align}\]</span></p>
+<p>During the interval, k may stop being at risk by moving to another
+destination or by censoring the observation. In the simulation, the
+cumulative hazard needs to be computed for a period during which
+individual k is exposed to the risk of a (i,j)-transition. Often, a
+period of exposure is endogenous and starts with the occurrence of
+another transition. For instance, the birth of a first child triggers a
+period at risk of a birth of a second child. The probability that k, who
+is in i at <span class="math inline">\(x_1\)</span>, is in j at age
+<span class="math inline">\(x_2\)</span> is <span class="math inline">\(exp \left[- _k \Lambda_{ij}(x_1,x_2)
+\right]\)</span>. The probability that k, who is in i at <span class="math inline">\(x_1\)</span>, is still in i at x <span class="math inline">\((x&gt;x_1)\)</span> is <span class="math display">\[\begin{align}
+_k  S_{i+}(x_1,x) =exp \left[-\int_{x_1}^{x} {\sum_{j \ne i} {_k
+\mu_{ij}(\tau) d\tau} } \right] = exp\left[-\int_{x_1}^{x_2} {_k
+\mu_{i+}(\tau) d\tau} \right]=exp\left[_k\Lambda_{i+}(x_1,x) \right]
+\end{align}\]</span> To determine the waiting time to leaving i for
+individual k, who is in i at x_1, a random number u is drawn from the
+standard uniform distribution and the root of the equation</p>
+<p><span class="math display">\[\begin{align}
+g(x-x_1)=_k \Lambda_{i+}(x_1,\infty)+ln(1-u)=0
+\tag{9}
+\end{align}\]</span> is determined. It gives the duration between <span class="math inline">\(x_1\)</span> and the age at transition, i.e.<span class="math inline">\(x_u-x_1\)</span>, with <span class="math inline">\(x_u\)</span> the age for which the above equation
+holds. The destination j is determined by sampling the multinomial
+distribution with parameters <span class="math inline">\(\{
+_kp_{i1}(x),_kp_{i2}(x) ,….,_kp_{ir}(x) \}\)</span> <span class="math display">\[\begin{align}
+_k p_{ij}^*(x)=\frac{_k\mu_{ij}(x)} {\sum_{j \ne i}
+{_k\mu_{ij}(x)}  }  \hspace{1.5cm} {j \ne i}
+\tag{10}
+\end{align}\]</span></p>
+<p>and <span class="math inline">\(\sum_{j \ne i}
+{_k}p_{ij}^*(x)=1\)</span>. Sampling a multinomial distribution consists
+of two steps. First, a random number u is drawn from the standard
+uniform distribution. Second, the position of u in the parameter space
+is determined. If <span class="math inline">\(u &lt;
+{_kp_{i1}^*(x)}\)</span>, the destination is state 1. If <span class="math inline">\({_kp_{i1}^*(x)} \le u &lt;
+{_kp_{i2}^*(x)}\)</span>, the destination is state 2, etc. The method is
+equivalent to creating a vector with endpoints 0 and 1 and breakpoints
+<span class="math inline">\({_kp_{i1}^*(x)},{_kp_{i1}^*(x)}+{_kp_{i2}^*(x)},{_kp_{i1}^*(x)}+{_kp_{i2}^*(x)}+{_kp_{i3}^*(x)}\)</span>,
+etc. and to determine the segment that contains u.</p>
+<p>Some transitions may not be possible, leading to an adjustment of the
+matrix of instantaneous transition rates <span class="math inline">\(_k\mathbf{\mu}(x)\)</span>. In the next section,
+the above theory is applied to simulate fertility careers. Each female
+member of the population becomes at risk of conception at menarche and
+remains at risk until menopause (conditional on survival and in the
+absence of sterilization). Fertility rates are zero initially, turn
+positive during adolescence and become zero again at menopause. The age
+at birth of the first child is determined by drawing a random waiting
+time from a piecewise exponential distribution with the age-specific
+first birth rates as parameters. If the waiting time exceeds the maximum
+reproductive age, the woman remains childless. Assume singleton births
+(no twins or triplets). Women with a first child are exposed to the risk
+of a second child. Exposure starts at the age at birth of the first
+child and ends at the age at birth of the second child or the maximum
+reproductive age. Women with two children are exposed to the risk of a
+third child, and so on. Formally, women with i children are at risk of
+an additional child. The risk period starts at the age of birth of the
+i-th child and ends at birth of the i+1-st child or the end of the
+reproductive period (age at menopause). If i=0, exposure starts at the
+lowest age of the reproductive period (age at menarche).</p>
+<p>Assuming no multiple births, a feasible transition is from i births
+to i+1 births. Other transitions are not possible. Hence, the transition
+intensities <span class="math inline">\(_k\mu_{ij}(t)\)</span> are 0
+except if j=i+1, with i the current number of biological children ever
+born to k. The matrix of party-specific instantaneous fertility rates
+is: <span class="math display">\[\begin{align}
+_k\mathbf{\mu}(x)=
+\begin{bmatrix}
+  \text{ }_k\mu_{11}(x) &amp; -_k\mu_{12}(x) &amp;  0  &amp; \cdots
+&amp; 0 \\
+  0 &amp; \text{ }_k\mu_{22}(x) &amp; -_k\mu_{23}(x)   &amp; \cdots
+&amp; 0 \\
+  \vdots  &amp; \vdots  &amp; \vdots &amp; \ddots  &amp; \vdots \\
+  0 &amp; 0 &amp; 0 &amp;  \cdots &amp; \text{ }_k\mu_{rr}(x)
+\end{bmatrix}
+\tag{11}
+\end{align}\]</span> with r the highest parity considered in the
+analysis and <span class="math inline">\(_k\mu_{rr}(x)\)</span> the
+instantenous rate that a woman with r children has another child. For
+instance, if r is five, then a woman with five children may have another
+child. Beyond parity five, the fertility rate is independent of the
+parity. The matrix of transition intensities defines a hierarchical
+model. A hierarchical model is characterized by having r living states
+connected by r-1 rates of transition <span class="citation">(Schoen
+2016, 2019)</span>.</p>
+<p>In the presence of mortality, the reproductive life course may be
+interrupted by death. Birth of the next child and death are competing
+risks. In the model, it is assumed that the rate of death is independent
+of the number of children ever born. In that case, individual lifespans
+may be simulated first, followed by the simulation of fertility
+careers.</p>
+</div>
+<div id="illustration-simulation-of-a-single-life-history" class="section level2">
+<h2>Illustration: simulation of a single life history</h2>
+<p>Consider a most simple case. An individual has one attribute with
+three possible values (A, B and C). The three possible values is the
+state space. The individual moves between the three states at constant
+rates. The transition rates are:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(   <span class="fl">0.0</span>,<span class="fl">0.10</span>,<span class="fl">0.05</span>,        </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.07</span>,<span class="fl">0.0</span>,<span class="fl">0.03</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.02</span>,<span class="fl">0.05</span>,<span class="fl">0.0</span>),<span class="at">nrow=</span><span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>namstates <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;C&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(A) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">origin=</span>namstates,<span class="at">destination=</span>namstates)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(A) <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">rowSums</span>(A)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="sc">-</span>A</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>B</span></code></pre></div>
+<pre><code>##       destination
+## origin     A     B     C
+##      A  0.15 -0.10 -0.05
+##      B -0.07  0.10 -0.03
+##      C -0.02 -0.05  0.07</code></pre>
+<p>The transition rate matrix B has the format of the matrix in equation
+5.</p>
+<p>The constant transition rates are used to generate life histories
+during segments of life. The function <span class="math inline">\(sim.msm()\)</span> of the <span class="math inline">\(msm\)</span> package simulates one realisation
+from a continuous-time Markov process up to a given time. Note that
+<span class="math inline">\(sim.msm()\)</span> requires that the states
+are numeric values. It also requires that the transition matrix has
+origin in rows and destination in columns <span class="citation">(Jackson 2011, p. 6)</span>. The following code chunk
+generates a history between ages 20 and 40 for an individual who starts
+in state A at age 20.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>bio <span class="ot">&lt;-</span> msm<span class="sc">::</span><span class="fu">sim.msm</span> (<span class="at">qmatrix=</span><span class="sc">-</span>B,<span class="at">mintime=</span><span class="dv">20</span>,<span class="at">maxtime=</span><span class="dv">40</span>,<span class="at">start=</span><span class="dv">1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>bio</span></code></pre></div>
+<pre><code>## $states
+## [1] 1 3 2 2
+## 
+## $times
+## [1] 20.00000 23.50288 31.11546 40.00000
+## 
+## $qmatrix
+##       destination
+## origin     A     B     C
+##      A -0.15  0.10  0.05
+##      B  0.07 -0.10  0.03
+##      C  0.02  0.05 -0.07</code></pre>
+<p>The function produces a list of three objects:</p>
+<ul>
+<li>Sequence of states occupied. The first state is the state at the
+start of the simulation. The last state is the state occupied at the end
+of the simulation, which is the same as the state occupied after the
+last transition.</li>
+<li>Ages of transition. The list includes the starting age and ending
+age.</li>
+<li>The transition matrix used to generate the life histories</li>
+</ul>
+<p>At the start of the simulation, the individual is in state A (state
+1) and exposed to the risk of moving to state B (state 2) or C (state
+3). A random draw from the exponential waiting time distribution gives
+3.5028761 years (since the start of the simulation and 23.5028761 years
+since the start of the time scale). Since 3.5028761 is the duration at
+which the value of the cumulative probability distribution is equal to
+u, we may determine the value of u produced by the random draw:</p>
+<p><span class="math display">\[u=1-exp[-\Lambda(x)]=1-exp⁡[-0.15*6.874
+]=0.643\]</span> The probability that an individual leaves state A
+before the end of the observation at 40 is 1-exp[-0.15*20]=0.95. Hence,
+if a random number is drawn that exceeds 0.95, the waiting time to the
+transition exceeds the observation window. In that case, the transition
+does not occur due to censoring.</p>
+<p>The destination state is determined by a Bernoulli trial with two
+possible outcomes: B or C and probability <span class="math inline">\(0.10/(0.10+0.05)=0.667\)</span> that B is the
+outcome.</p>
+<p>The function <span class="math inline">\(sim.msm()\)</span> is also
+used by <span class="citation">Cook and Lawless (2018, p.
+339)</span>.</p>
+<p>After this illustration of the mechanism, we return to fertility.
+Suppose a female member of the virtual population experiences throuthout
+her life the age- and parity-specific fertility rates of the United
+States in 2019. The fertility career is a realization (<em>sample
+path</em>) of a continuous-time Markov process. The function <span class="math inline">\(Sim\_bio()\)</span> of <span class="math inline">\(VirtualPop\)</span> is used to generate the
+fertility career. Unlike in <span class="math inline">\(sim.msm()\)</span>, the transition rates used by
+<span class="math inline">\(Sim\_bio()\)</span> are age-specific. The
+fertility rates of the United States in 2019 are distributed with the
+<span class="math inline">\(VirtualPop\)</span> package. They are loaded
+with the <span class="math inline">\(data\)</span> function of R
+base:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (VirtualPop)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>rates <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(rates)</span></code></pre></div>
+<p>The object <span class="math inline">\(rates\)</span> has three
+components: (a) the death rates by age and sex (ASDR), (b) the fertility
+rates by age and parity (ASFR), and (c) the fertility rates in a format
+required by multistate models (ratesM). The rates for ages 25 to 29
+are:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rates<span class="sc">$</span>ratesM[<span class="dv">26</span><span class="sc">:</span><span class="dv">29</span>,,]</span></code></pre></div>
+<pre><code>## , , Origin = par0
+## 
+##     Destination
+## Age     par0     par1 par2 par3 par4 par5 par6
+##   25 0.05250 -0.05250    0    0    0    0    0
+##   26 0.05646 -0.05646    0    0    0    0    0
+##   27 0.06218 -0.06218    0    0    0    0    0
+##   28 0.06976 -0.06976    0    0    0    0    0
+## 
+## , , Origin = par1
+## 
+##     Destination
+## Age  par0    par1     par2 par3 par4 par5 par6
+##   25    0 0.16041 -0.16041    0    0    0    0
+##   26    0 0.15638 -0.15638    0    0    0    0
+##   27    0 0.15205 -0.15205    0    0    0    0
+##   28    0 0.15047 -0.15047    0    0    0    0
+## 
+## , , Origin = par2
+## 
+##     Destination
+## Age  par0 par1    par2     par3 par4 par5 par6
+##   25    0    0 0.14116 -0.14116    0    0    0
+##   26    0    0 0.13336 -0.13336    0    0    0
+##   27    0    0 0.12156 -0.12156    0    0    0
+##   28    0    0 0.11499 -0.11499    0    0    0
+## 
+## , , Origin = par3
+## 
+##     Destination
+## Age  par0 par1 par2    par3     par4 par5 par6
+##   25    0    0    0 0.13117 -0.13117    0    0
+##   26    0    0    0 0.12155 -0.12155    0    0
+##   27    0    0    0 0.11328 -0.11328    0    0
+##   28    0    0    0 0.10449 -0.10449    0    0
+## 
+## , , Origin = par4
+## 
+##     Destination
+## Age  par0 par1 par2 par3    par4     par5 par6
+##   25    0    0    0    0 0.14558 -0.14558    0
+##   26    0    0    0    0 0.13723 -0.13723    0
+##   27    0    0    0    0 0.12618 -0.12618    0
+##   28    0    0    0    0 0.11658 -0.11658    0
+## 
+## , , Origin = par5
+## 
+##     Destination
+## Age  par0 par1 par2 par3 par4    par5     par6
+##   25    0    0    0    0    0 0.14558 -0.14558
+##   26    0    0    0    0    0 0.13723 -0.13723
+##   27    0    0    0    0    0 0.12618 -0.12618
+##   28    0    0    0    0    0 0.11658 -0.11658
+## 
+## , , Origin = par6
+## 
+##     Destination
+## Age  par0 par1 par2 par3 par4 par5 par6
+##   25    0    0    0    0    0    0    0
+##   26    0    0    0    0    0    0    0
+##   27    0    0    0    0    0    0    0
+##   28    0    0    0    0    0    0    0</code></pre>
+<p>The following function call simulates the fertility career of a
+hypothetical person born on June 12th 1990.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>popsim <span class="ot">&lt;-</span> <span class="fu">data.frame</span> (<span class="at">ID=</span><span class="dv">3</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">born=</span><span class="fl">1990.445</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">start=</span><span class="dv">0</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">end=</span><span class="dv">55</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">st_start=</span><span class="st">&quot;par0&quot;</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>ch <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(<span class="fu">Sim_bio</span> (<span class="at">datsim=</span>popsim,<span class="at">ratesM=</span>rates<span class="sc">$</span>ratesM))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ch</span></code></pre></div>
+<pre><code>## $age_startSim
+## [1] 0
+## 
+## $age_endSim
+## [1] 56
+## 
+## $nstates
+## [1] 3
+## 
+## $states
+## [1] 1 2 3
+## 
+## $path
+## [1] &quot;par0par1par2&quot;
+## 
+## $ages_trans
+## [1] 23.62097 27.32274</code></pre>
+<p>The individual has a first child at age 28 and a second at age 34.
+Since the date of birth is known, the calendar dates at childbirth can
+be determined. The first child is born on July 3rd 2018 and the second
+on 27th March 2025.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>(lubridate<span class="sc">::</span><span class="fu">date_decimal</span>(<span class="fl">1990.445+28.0567</span>), <span class="st">&quot;%Y-%m-%d&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2018-07-03&quot;</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>(lubridate<span class="sc">::</span><span class="fu">date_decimal</span>(<span class="fl">1990.445+34.789</span>), <span class="st">&quot;%Y-%m-%d&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2025-03-27&quot;</code></pre>
+<p>The simulation window covers the entire reproductive period. The
+simulation may be interrupted at any age during the reproductive period,
+analogous to the censoring of a longitudinal observation. To assess the
+validity of the simulation, the simulation window must coincide with the
+observation window (see vignette <em>Validity of the simulation</em>).
+The argument <span class="math inline">\(end\)</span> of the <span class="math inline">\(Sim\_bio()\)</span> function is an
+individual-level variable indicating the end of the simulation for the
+individual.</p>
+<p><span class="math inline">\(Sim\_bio()\)</span> is used in the
+function <span class="math inline">\(Children()\)</span> of <span class="math inline">\(VirtualPop\)</span>. The function <span class="math inline">\(Children()\)</span> produces two objects (data
+frames), one related to the mother (and father) and the other related to
+the new-born children. Using <span class="math inline">\(Children()\)</span> to simulate the fertility
+career of the individual in the virtual population with ID equal to 1,
+is</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Children</span> (<span class="at">dat0=</span>dataLH[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>],rates)</span></code></pre></div>
+<pre><code>## $data
+##   ID gen    sex   bdated   ddated x_D IDpartner IDmother IDfather jch nch id.1
+## 1  1   1 Female 2019.053 2112.222  35      1177       NA       NA  NA   1    4
+## 3  3   1 Female 2019.158 2091.099  35      9416       NA       NA  NA   0   NA
+##   id.2 id.3 id.4 id.5 id.6 id.7 id.8 id.9    age.1 age.2 age.3 age.4 age.5
+## 1   NA   NA   NA   NA   NA   NA   NA   NA 29.26028    NA    NA    NA    NA
+## 3   NA   NA   NA   NA   NA   NA   NA   NA       NA    NA    NA    NA    NA
+##   age.6 age.7 age.8 age.9
+## 1    NA    NA    NA    NA
+## 3    NA    NA    NA    NA
+## 
+## $dch
+##   ID gen    sex   bdated   ddated      x_D IDpartner IDmother IDfather jch
+## 1  4   2 Female 2048.313 2124.147 75.83373        NA        1       NA   1</code></pre>
+<p>Now we turn to an application: the simulation of fertility careers of
+women in the United States.</p>
+</div>
+<div id="application-fertility-histories-of-women-in-the-united-states" class="section level2">
+<h2>Application: fertility histories of women in the United States</h2>
+<p>The model described in the previous section is used to simulate
+individual fertility histories in the presence of mortality.The data are
+fertility and mortality rates of the United States in 2019. The data are
+downloaded from the Human Mortality Database (HMD) and the Human
+Fertility Database (HFD). The retrieval of data from the HMD and HFD is
+described in another vignette (<span class="math inline">\(Tutorial\)</span>). The mortality and fertility
+rates are assumed to remain constant during the simulation.
+Consequently, the simulated life histories convey information embedded
+in the mortality and fertility rates of 2019. They should not be
+interpreted as descriptions of historical trends, projections or
+forecasts. That requires time-varying rates.</p>
+<p>The age-specific fertility and mortality rates of the population of
+the United States in 2019 are distributed with the <span class="math inline">\(VirtualPop\)</span> package for illustrative
+purpose. The rates are contained in the data object <span class="math inline">\(rates\)</span>. The rates can be used after being
+loaded with the <span class="math inline">\(data\)</span> function of R
+base:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (VirtualPop)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>rates <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(rates)</span></code></pre></div>
+<p>The creation of the virtual population from fertility and mortality
+rates involves several steps. The remainder of this section is a
+description of the steps to generate the virtual population. The steps
+are:</p>
+<ul>
+<li>Determine the size of the virtual population</li>
+<li>Create a data frame with selected data on each individual in the
+virtual population.
+<ul>
+<li>Add ID of partner (function <span class="math inline">\(Partnership()\)</span>)</li>
+</ul></li>
+<li>Generate individual fertility histories (for members of initial
+population - generation 1) (function <span class="math inline">\(Children()\)</span>)</li>
+<li>Add, for each new-born, date of birth, sex, ID of mother and ID
+father</li>
+<li>Add, for each new-born, ID of partner</li>
+<li>Generate individual fertility histories for members of generation 2
+(function <span class="math inline">\(Children()\)</span>)</li>
+<li>Generate individual fertility histories for members of generation 3
+(function <span class="math inline">\(Children()\)</span>)</li>
+<li>Generate individual fertility histories for members of generation 4
+(function <span class="math inline">\(Children()\)</span>)</li>
+</ul>
+<p>The simulation starts by determining the size of the virtual
+population. Each individual in the virtual population is assigned a
+unique identification number (ID) and a date of birth. If all births
+occur in the same year or same period, then the population consists of a
+single birth cohort. A real population may be approximated by
+distributing births over many years. In this section, it is assumed that
+all births occur in a single year. Dates of birth are obtained by
+sampling from a probability distribution of births during the year. In
+this paper, a uniform distribution is assumed (no seasonal effects). The
+date of birth of an individual is the year of birth plus a fraction of a
+year, equal to a random number from the standard uniform distribution.
+The date of birth is expressed as a real number (decimal numeral system)
+and is referred to as <em>decimal date of birth</em>. The format is
+particularly useful to compute ages and durations. Decimal dates may be
+converted into calendar dates. Note that the computer does not store
+calendar dates, but stores dates as time (seconds or milliseconds)
+elapsed since a reference date and time, e.g. midnight, 1st January
+1970. The conversion into calendar dates is not at all straightforward
+and software packages may give different results. The conversion should
+account for months of different length and leap years. The R library
+contains several date functions that correctly handle chronological
+objects. For instance, the <span class="math inline">\(date\_decimal()\)</span> function of the <span class="math inline">\(lubridate\)</span> package, which is part of <span class="math inline">\(tidyverse\)</span>, converts a decimal date into a
+calendar date. For a review and discussion of issues related to ages and
+durations in the simulation of life histories, see <span class="citation">Willekens (2013)</span>.</p>
+<p>At the start of the simulation, each individual is randomly assigned
+a sex using the empirical age-specific sex ratio at birth in the base
+year. Other personal attributes may be added, but they are omitted in
+this illustration.</p>
+<p>The simulation includes a very simple partner formation process.
+Partners are selected at random from the opposite sex. Since the process
+is purely random, partnership formation may be simulated to occur at
+birth. When more boys are born than girls, some males remain without a
+partner.</p>
+<p>For each individual in the virtual population, a data record is
+created. It contains the individual’s ID, date of birth and sex. It also
+contains a variable for the generation to which the individual belongs.
+Members of the initial population constitute generation one. The code
+is</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>refyear <span class="ot">&lt;-</span> <span class="dv">2019</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">110</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>ncohort <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>ID <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>ncohort</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>sex <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(ncohort,<span class="dv">1</span>,<span class="at">prob=</span><span class="dv">1</span><span class="sc">/</span><span class="fl">2.05</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>sex <span class="ot">&lt;-</span> <span class="fu">factor</span> (sex,<span class="at">levels=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),<span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>),<span class="at">ordered=</span><span class="cn">TRUE</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Population size by sex</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>nmales <span class="ot">&lt;-</span> <span class="fu">length</span>(sex[sex<span class="sc">==</span><span class="st">&quot;Male&quot;</span>])</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>nfemales <span class="ot">&lt;-</span> <span class="fu">length</span>(sex[sex<span class="sc">==</span><span class="st">&quot;Female&quot;</span>])</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>gen <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>,ncohort) <span class="co"># generation 1</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Decimal date of birth</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>bdated <span class="ot">&lt;-</span> refyear<span class="sc">+</span><span class="fu">runif</span>(ncohort)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frame</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span> (<span class="at">ID=</span>ID,<span class="at">gen=</span>gen,<span class="at">sex=</span>sex,<span class="at">bdated=</span>bdated,<span class="at">ddated=</span><span class="cn">NA</span>,<span class="at">x_D=</span><span class="cn">NA</span>,<span class="at">IDpartner=</span><span class="cn">NA</span>,<span class="at">IDmother=</span><span class="cn">NA</span>,<span class="at">IDfather=</span><span class="cn">NA</span>,<span class="at">jch=</span><span class="cn">NA</span>,<span class="at">nch=</span><span class="cn">NA</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Ages at death, obtained by sampling a peicewise-exponential distribution, using the rpexp function of the msm package</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>d<span class="sc">$</span>x_D[d<span class="sc">$</span>sex<span class="sc">==</span><span class="st">&quot;Male&quot;</span>] <span class="ot">&lt;-</span> msm<span class="sc">::</span><span class="fu">rpexp</span>(<span class="at">n=</span>nmales,<span class="at">rate=</span>rates<span class="sc">$</span>ASDR[,<span class="st">&quot;Males&quot;</span>],<span class="at">t=</span>ages)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>d<span class="sc">$</span>x_D[d<span class="sc">$</span>sex<span class="sc">==</span><span class="st">&quot;Female&quot;</span>] <span class="ot">&lt;-</span> msm<span class="sc">::</span><span class="fu">rpexp</span>(<span class="at">n=</span>nfemales,<span class="at">rate=</span>rates<span class="sc">$</span>ASDR[,<span class="st">&quot;Females&quot;</span>],<span class="at">t=</span>ages)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Decimal data of death</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>d<span class="sc">$</span>ddated <span class="ot">&lt;-</span> d<span class="sc">$</span>bdated<span class="sc">+</span>d<span class="sc">$</span>x_D</span></code></pre></div>
+<p>Individual records include empty spaces for the IDs of the partner,
+the mother and father of the individual. Their IDs are determined later.
+The spaces are included to facilitate the merging of data on multiple
+generations into a single data frame.</p>
+<p>The simple partnership model is implemented in function <span class="math inline">\(Partnership(d)\)</span>. It accepts the data frame
+<span class="math inline">\(d\)</span> as input and returns the data
+frame augmented by the partner’s ID.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> VirtualPop<span class="sc">::</span><span class="fu">Partnership</span>(<span class="at">dataLH=</span>d)</span></code></pre></div>
+<p>The first lines of the data frame of individual records are:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(d)</span></code></pre></div>
+<pre><code>##   ID gen    sex   bdated   ddated      x_D IDpartner IDmother IDfather jch nch
+## 1  1   1 Female 2019.775 2109.464 89.68982       203       NA       NA  NA  NA
+## 2  2   1   Male 2019.552 2111.897 92.34472       171       NA       NA  NA  NA
+## 3  3   1 Female 2019.270 2117.496 98.22659       442       NA       NA  NA  NA
+## 4  4   1 Female 2019.527 2105.177 85.65000       773       NA       NA  NA  NA
+## 5  5   1 Female 2019.590 2093.010 73.41928       292       NA       NA  NA  NA
+## 6  6   1 Female 2019.769 2110.451 90.68226       245       NA       NA  NA  NA</code></pre>
+<p>For women, ages at childbirth are determined by sampling from waiting
+time distributions with parameters equal to the fertility rates by age
+and parity. When a child is born, it receives a unique ID and a new
+individual data record is created. The generation variable is set to 2.
+The date of birth is determined by the date of birth of the mother and
+her exact age at birth of the child. The ID of the mother is added to
+the child’s record and the child’s ID is added to the data records of
+the mother and her partner, assumed to be the father. The record
+linkages enable to track the descending line of offspring and ascending
+line of parentage. It significantly facilitates the study of genealogies
+and kinship networks. The new-born is also assigned a sex using the
+empirical sex ratio at birth and is randomly allocated a partner. The
+lifespan and the fertility career of each member of the second
+generation is determined by sampling the appropriate probability
+distributions. The function <span class="math inline">\(Children(dat0,rates)\)</span> does the
+computations. The first argument is the individual data structure,<span class="math inline">\(d\)</span> in this illustration, and the second is
+the object with the transition rates. For instance,</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>dch1 <span class="ot">&lt;-</span> VirtualPop<span class="sc">::</span><span class="fu">Children</span>(<span class="at">dat0=</span>d,<span class="at">rates=</span>rates)</span></code></pre></div>
+<p>The object <span class="math inline">\(dch1\)</span> has two
+components: <span class="math inline">\(data\)</span> and <span class="math inline">\(dch\)</span>. The first components is comparable
+to the women’s file in demographic surveys and the second to the
+children’s file (see e.g. Demographic and Health Survey (DHS) [<a href="https://dhsprogram.com" class="uri">https://dhsprogram.com</a>]).
+The object <span class="math inline">\(data\)</span> is the input object
+<span class="math inline">\(d\)</span> with, for each mother and father,
+information on</p>
+<ul>
+<li>number of children, and</li>
+<li>the ID of each child and the mother’s age at birth.</li>
+</ul>
+<p>The second object <span class="math inline">\(dch\)</span> is a data
+frame with individual records for the new-borns (second generation). It
+has the ID of the child, the generation, sex, date of birth, the birth
+order (variable <span class="math inline">\(jch\)</span>), the ID of the
+mother, the ID of the father, and the date of death of the child. The ID
+of the father is the ID of the partner of the mother:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>dch1<span class="sc">$</span>dch<span class="sc">$</span>IDfather <span class="ot">&lt;-</span> dch1<span class="sc">$</span>data<span class="sc">$</span>IDpartner[dch1<span class="sc">$</span>dch<span class="sc">$</span>IDmother]</span></code></pre></div>
+<p>The first records are shown below.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dch1<span class="sc">$</span>data)</span></code></pre></div>
+<pre><code>##   ID gen    sex   bdated   ddated      x_D IDpartner IDmother IDfather jch nch
+## 1  1   1 Female 2019.775 2109.464 89.68982       203       NA       NA  NA   1
+## 2  2   1   Male 2019.552 2111.897 92.34472       171       NA       NA  NA   0
+## 3  3   1 Female 2019.270 2117.496 98.22659       442       NA       NA  NA   4
+## 4  4   1 Female 2019.527 2105.177 85.65000       773       NA       NA  NA   2
+## 5  5   1 Female 2019.590 2093.010 73.41928       292       NA       NA  NA   3
+## 6  6   1 Female 2019.769 2110.451 90.68226       245       NA       NA  NA   1
+##   id.1 id.2 id.3 id.4 id.5 id.6 id.7 id.8 id.9    age.1    age.2    age.3
+## 1 1001   NA   NA   NA   NA   NA   NA   NA   NA 31.67996       NA       NA
+## 2   NA   NA   NA   NA   NA   NA   NA   NA   NA       NA       NA       NA
+## 3 1002 1003 1004 1005   NA   NA   NA   NA   NA 31.19464 31.90299 35.40190
+## 4 1006 1007   NA   NA   NA   NA   NA   NA   NA 26.32726 28.48625       NA
+## 5 1008 1009 1010   NA   NA   NA   NA   NA   NA 25.57094 28.64729 31.69298
+## 6 1011   NA   NA   NA   NA   NA   NA   NA   NA 29.20122       NA       NA
+##      age.4 age.5 age.6 age.7 age.8 age.9
+## 1       NA    NA    NA    NA    NA    NA
+## 2       NA    NA    NA    NA    NA    NA
+## 3 39.93691    NA    NA    NA    NA    NA
+## 4       NA    NA    NA    NA    NA    NA
+## 5       NA    NA    NA    NA    NA    NA
+## 6       NA    NA    NA    NA    NA    NA</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dch1<span class="sc">$</span>dch)</span></code></pre></div>
+<pre><code>##     ID gen    sex   bdated   ddated      x_D IDpartner IDmother IDfather jch
+## 1 1001   2   Male 2051.454 2077.662 26.20800        NA        1      203   1
+## 2 1002   2 Female 2050.464 2136.194 85.73005        NA        3      442   1
+## 3 1003   2 Female 2051.173 2140.771 89.59850        NA        3      442   2
+## 4 1004   2   Male 2054.672 2136.665 81.99338        NA        3      442   3
+## 5 1005   2 Female 2059.207 2149.202 89.99507        NA        3      442   4
+## 6 1006   2   Male 2045.855 2139.601 93.74613        NA        4      773   1</code></pre>
+<p>The members of the second generation partner with individuals of the
+same generation. Partners are allocated randomly.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> VirtualPop<span class="sc">::</span><span class="fu">Partnership</span> (<span class="at">dataLH=</span>dch1<span class="sc">$</span>dch)</span></code></pre></div>
+<p>The object <span class="math inline">\(d2\)</span> is <span class="math inline">\(dch1\$dch\)</span> augmented by the IDs of
+partners. The data frame contains the data on the second generation in a
+format that is consistent with the data frame of the first generation,
+which facilitates merging the data frames. The <span class="math inline">\(Children()\)</span> function is used to obtain
+information on the third generation (children of women of the second
+generation):</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>dch2 <span class="ot">&lt;-</span>  VirtualPop<span class="sc">::</span><span class="fu">Children</span>(<span class="at">dat0=</span>d2,<span class="at">rates=</span>rates)</span></code></pre></div>
+<p>Partnership in the third generation is the outcome of a random
+search:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>d3 <span class="ot">&lt;-</span> VirtualPop<span class="sc">::</span><span class="fu">Partnership</span> (<span class="at">dataLH=</span>dch2<span class="sc">$</span>dch)</span></code></pre></div>
+<p>A similar procedure is followed to generate the fourth generation
+(children of mothers of the third generation) and higher-order
+generations.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>dch3 <span class="ot">&lt;-</span>  VirtualPop<span class="sc">::</span><span class="fu">Children</span>(<span class="at">dat0=</span>d3,<span class="at">rates=</span>rates)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>d4 <span class="ot">&lt;-</span> VirtualPop<span class="sc">::</span><span class="fu">Partnership</span> (<span class="at">dataLH=</span>dch3<span class="sc">$</span>dch)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>dch4 <span class="ot">&lt;-</span>  VirtualPop<span class="sc">::</span><span class="fu">Children</span>(<span class="at">dat0=</span>d4,<span class="at">rates=</span>rates)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>d4 <span class="ot">&lt;-</span> dch4<span class="sc">$</span>data[,<span class="dv">1</span><span class="sc">:</span><span class="fu">which</span> (<span class="fu">colnames</span>(dch4<span class="sc">$</span>data)<span class="sc">==</span><span class="st">&quot;nch&quot;</span>)]</span></code></pre></div>
+<p>The object <span class="math inline">\(d4\)</span> has data on the
+fourth generation, including on the children of members of the fourth
+generation.</p>
+<p>Data on the four generations is merged to a single data frame.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>data4 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(dch1<span class="sc">$</span>data,dch2<span class="sc">$</span>data,dch3<span class="sc">$</span>data,dch4<span class="sc">$</span>data)</span></code></pre></div>
+<p>The data frame that results is similar to the <span class="math inline">\(dataLH\)</span> data object included in the <span class="math inline">\(VirtualPop\)</span> package.</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-aalen2008survival" class="csl-entry">
+Aalen, O., Borgan, O., &amp; Gjessing, H. (2008). <em>Survival and event
+history analysis: A process point of view</em>. Springer Science &amp;
+Business Media.
+</div>
+<div id="ref-cook2018multistate" class="csl-entry">
+Cook, R. J., &amp; Lawless, J. F. (2018). <em>Multistate models for the
+analysis of life history data</em>. Chapman; Hall/CRC.
+</div>
+<div id="ref-jackson2011multi" class="csl-entry">
+Jackson, C. (2011). Multi-state models for panel data: The msm package
+for <span>R</span>. <em>Journal of Statistical Software</em>,
+<em>38</em>, 1–28. <a href="https://doi.org/10.18637/jss.v038.i08">https://doi.org/10.18637/jss.v038.i08</a>
+</div>
+<div id="ref-schoen2016hierarchical" class="csl-entry">
+Schoen, R. (2016). Hierarchical multistate models from population data:
+An application to parity statuses. <em>PeerJ</em>, <em>4</em>, e2535.
+</div>
+<div id="ref-schoen2019analytical" class="csl-entry">
+Schoen, R. (2019). <em>Analytical family demography</em> (Vol. 47).
+Springer.
+</div>
+<div id="ref-willekens2013chronological" class="csl-entry">
+Willekens, F. (2013). Chronological objects in demographic research.
+<em>Demographic research</em>, <em>28</em>, 649–680.
+</div>
+<div id="ref-willekens2014" class="csl-entry">
+Willekens, F. (2014). <em>Multistate analysis of life histories with
+<span>R</span></em>. Springer.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
