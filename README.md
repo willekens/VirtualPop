@@ -14,6 +14,12 @@ The package comes with four vignettes.
 * Validation of the simulation.
     Results of the simulation are compared with demographic (kinship) indicators computed from census and survey data. The virtual population generated from demographic rates of the United States in 2019 is compared with observations in the Current Population Survey 2018. 
     
+In the $doc$ folder, you find 
+
+* pdf versions of the vignettes
+* package manual
+* R code used in vignettes
+
 The companion package $Families$ extract family relationships from the multi-generation virtual population. These relationships are the basis for the computation of kinship indicators. Areas of application include kinship networks, the demography of grandparenthood, the demography of sandwich generations (double burden of child care and parental care), and perspectives of children on population. 
 
 You should be able to install VirtualPop using the following R code: 
