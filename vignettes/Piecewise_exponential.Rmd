@@ -4,7 +4,7 @@ author: "Frans Willekens"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: "References.bib"
-csl: "demography.csl"
+csl: "https://raw.githubusercontent.com/willekens/VirtualPop/main/vignettes/demography.csl"
 vignette: |
     %\VignetteIndexEntry{Sampling Piecewise-Exponential Waiting Time Distributions}
     %\VignetteEngine{knitr::rmarkdown}
