@@ -1,18 +1,25 @@
 Package: VirtualPop
 Type: Package
 Title: Simulation of Individual Life Histories Using Data from the Human Mortality Database and the Human Fertility Database
-Version: 1.0
-Imports: msm,HMDHFDplus
+Version: 1.0.01
+Imports: 
+  msm,
+  HMDHFDplus (>= 1.9.18)
 Suggests: knitr, rmarkdown,ggplot2,foreign,lubridate,xml2
 BuildResaveData: best
 VignetteBuilder: knitr
 LazyData: true
-Date: 2022-06-05
-Author: Frans Willekens
+Date: 2022-06-19
+Authors@R: c(
+   person("Frans", "Willekens", role = c("aut", "cre"), 
+          email = "Willekens@nidi.nl ", comment = c(ORCID = "0000-0001-6125-0212")),
+   person("Tim", "Riffe", role = "ctb", 
+          email = "tim.riffe@gmail.com", comment = c(ORCID = "0000-0002-2673-4622")))
 Maintainer: Frans Willekens <willekens@nidi.nl>
 Description: Simulation of life histories in continuous time using individual-level state transition (multi-state) models. Lifespans and fertility histories are generated using data from the Human Mortality Database and the Human Fertility Database. To facilitate data analysis, the virtual observations are stored in a data structure commonly used in sample surveys. Genealogies are created to facilitate the study of family ties. 
 License: GPL-2
 NeedsCompilation: no
 Depends: R (>= 3.5.0)
 Encoding: UTF-8
+BugReports: https://github.com/willekens/VirtualPop/issues
 RoxygenNote: 7.1.2
