@@ -2,13 +2,12 @@
 title: "Validation of the simulation"
 author: "Frans Willekens"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-bibliography: "References.bib"
-csl: "demography.csl"
-vignette: |
-  %\VignetteIndexEntry{Validation of the simulation} 
-  %\VignetteEngine{knitr::rmarkdown} 
-  %\VignetteEncoding{UTF-8}
+output:
+  pdf_document: default
+  html_document: default
+bibliography: References.bib
+vignette: "%\\VignetteIndexEntry{Validation of the simulation} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
+  \n"
 ---
 ## Introduction
 
