@@ -29,8 +29,8 @@
 #' 
 #' 
 #' # The object rates is produced by the function GetRates.
-#' data(rates)
-#' dataLH <- GetGenerations (rates=rates,ncohort=100,ngen=4)
+#' utils::data(rates)
+#' dLH <- GetGenerations (rates=rates,ncohort=100,ngen=4)
 #' 
 #' 
 #' @export GetGenerations
@@ -47,9 +47,6 @@ generation <- 1
 
 #   Margolis 2019  50,000 agents in each race group 
 country <- attr(rates,"country")
- print (paste("country = ",country,sep=""))
- print (paste("refyear = ",refyear,sep=""))
- print (paste ("ncohort= ",ncohort,sep=""))
 # ID
 if (is.null(ID1)) ID <- 1:ncohort  else ID <-  ID1:(ID1+ncohort)
 
@@ -125,33 +122,22 @@ popsim <- data.frame (ID=3,
 #z <- rates$ (datsim=popsim,rates$ratesM)
 #z  # Go to Children.r
 
-a <- Sys.time()
 #datg1 <- Children (dat0=data1,ASDR=rates$ASDR,ASFR=rates$ASFR)
 data1 <- data
-data2 <- Partnership (dataLH=data1)
+data2 <- Partnership (dLH=data1)
 datg1 <- Children (dat0=data2,rates)
-c <- Sys.time()
-print (paste ("Time to generate generation 1 ",c-a," secs",sep=""))
 if (ngen>=2)
 {
-datg1$dch <- Partnership (dataLH=datg1$dch)
+datg1$dch <- Partnership (dLH=datg1$dch)
 datg2<- Children (dat0=datg1$dch,rates=rates)
-d <- Sys.time()
-print (paste ("Time to generate generation 2 ",d-c," secs",sep=""))
 }
 if (ngen>=3)
-{datg2$dch <- Partnership (dataLH=datg2$dch)
+{datg2$dch <- Partnership (dLH=datg2$dch)
 datg3<- Children (dat0=datg2$dch,rates=rates)
-e <- Sys.time()
-print (paste ("Time to generate generation 3 ",e-d," secs",sep=""))
 }
 if (ngen>=4)
-{datg3$dch <- Partnership (dataLH=datg3$dch)
+{datg3$dch <- Partnership (dLH=datg3$dch)
 datg4<- Children (dat0=datg3$dch,rates=rates)
-b <- Sys.time()
-print (paste ("Time to generate generation 4 ",b-e," secs",sep=""))
-print (paste ("Time to generate generation all generations ",b-a," secs",sep=""))
-print (b-a)
 }
 
 if (ngen==1) {dataLH <- datg1$data}

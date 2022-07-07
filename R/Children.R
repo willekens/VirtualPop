@@ -11,6 +11,12 @@
 #' and fertility history of egos and (b) children data frame
 #' @author Frans Willekens
 #' @export Children
+#' @examples
+#' utils::data(dataLH)
+#' utils::data(rates)
+#' dat0 <- dataLH[1:10,]
+#' out <- Children(dat0=dat0,rates=rates)
+#'
 Children <- function (dat0,rates)
 { 
 # Generates individual fertility careers

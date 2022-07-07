@@ -24,9 +24,9 @@ function (n, breakpoints, rates)
 {
     success = TRUE
     if (!exists("pw_root")) 
-        print("r.pw_exp: pw_root does not exist")
+        warning ("r.pw_exp: pw_root does not exist")
     if (!exists("H_pw")) 
-        print("r.pw_exp: H_pw does not exist")
+        warning ("r.pw_exp: H_pw does not exist")
     i <- 1
     u <- runif(n)
     interval = c(breakpoints[1], breakpoints[length(breakpoints)])
