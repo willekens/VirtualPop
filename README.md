@@ -36,7 +36,7 @@ The companion package $Families$ extract family relationships from the multi-gen
 
 To install the package from CRAN, type in the R window:
 
-install.packages ("VirtualPop")
+        install.packages ("VirtualPop")
 
 To install the package from GitHub, use:
 
