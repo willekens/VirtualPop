@@ -4,3 +4,4 @@ VirtualPop.Rproj
 ^doc$
 ^Meta$
 .github
+^\.github$
