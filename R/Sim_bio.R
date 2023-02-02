@@ -18,44 +18,9 @@
 #'   # Fertily history is simulated from starting age to ending age
 #'   # Individual starts in state "par0"
 #'   # ratesM is an object with the rates in the proper format for multistate analysis
-#'   data(rates)
+#'   utils::data(rates)
 #'   popsim <- data.frame(ID=1,born=2000.450,start=0,end=80,st_start="par0")
 #'   ch <- Sim_bio (datsim=popsim,ratesM=rates$ratesM) 
-#' 
-#' @export Sim_bio
-#` @ImportFrom("stats", "aggregate", "rbinom", "runif", "uniroot")
-
-
-
-
-
-
-
-#' Generic Function to Generate Single Life History
-#' 
-#' The function is called from the function Children. It uses the rpexp
-#' function of the msm package.
-#' 
-#' 
-#' @param datsim Data frame with individual data
-#' @param ratesM Multistate transition rates in standard (multistate) format
-#' @return \item{age_startSim}{Age at start of simulation}
-#' \item{age_endSim}{Age at end of simulation} \item{nstates}{Number of states}
-#' \item{path}{path: sequence of states occupied} \item{ages_trans}{Ages at
-#' transition}
-#' @author Frans Willekens
-#' @examples
-#' 
-#' 
-#'   # Generates single fertility history from mortality rates by age 
-#'   # and fertility rates by age and parity
-#'   # Fertily history is simulated from starting age to ending age
-#'   # Individual starts in state "par0"
-#'   # ratesM is an object with the rates in the proper format for multistate analysis
-#'   data(rates)
-#'   popsim <- data.frame(ID=1,born=2000.450,start=0,end=80,st_start="par0")
-#'   ch <- Sim_bio (datsim=popsim,ratesM=rates$ratesM) 
-#' 
 #' 
 #' @export Sim_bio
 Sim_bio <- function (datsim, ratesM) 
@@ -89,7 +54,7 @@ Sim_bio <- function (datsim, ratesM)
     while (cur_age < ceiling(datsim$end)) {
         rate <- ratesM[rem_ages_index, cur_st, cur_st]
         if (length(rate) != length(rem_ages - cur_age)) 
-            print(paste("length(rate)=", length(rate), "cur_age=", 
+            warning (paste("length(rate)=", length(rate), "cur_age=", 
                 cur_age, "maxage=", ceiling(datsim$end), "rem_ages=", 
                 rem_ages))
         nextlag <- suppressWarnings(msm::rpexp(1, rate, rem_ages - cur_age))
@@ -103,7 +68,7 @@ Sim_bio <- function (datsim, ratesM)
         else rem_ages <- c(cur_age, ceiling(cur_age):floor(datsim$end))
         ntrans <- ntrans + 1
         if (ntrans > ntrans_max) {
-            print(paste("Number of transitions exceeds maximum. ntrans_max=", 
+            warning (paste("Number of transitions exceeds maximum. ntrans_max=", 
                 ntrans_max, sep = ""))
         }
         ages_seq[ntrans] <- cur_age

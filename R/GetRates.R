@@ -20,9 +20,7 @@
 #' @examples
 #' 
 #' 
-#' ## Not run:
-#' ## ratesR <- GetRates(data,refyear)
-#' ## End (Not run)
+#' \dontrun{ratesR <- GetRates(data,refyear)}
 #' 
 #' 
 #' @export GetRates

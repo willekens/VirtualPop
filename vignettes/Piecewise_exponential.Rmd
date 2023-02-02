@@ -2,13 +2,14 @@
 title: "Sampling Piecewise-Exponential Waiting Time Distributions"
 author: "Frans Willekens"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  html_document:
+    df_print: paged
 bibliography: "References.bib"
-csl: "https://raw.githubusercontent.com/willekens/VirtualPop/main/vignettes/demography.csl"
 vignette: |
     %\VignetteIndexEntry{Sampling Piecewise-Exponential Waiting Time Distributions}
-    %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}"
+    %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include = FALSE}
@@ -124,7 +125,7 @@ text(x=t[z]+1.4,y=0,labels="23.27")
 
 ```
 
-Since the survival function can be derived unambiguously from the cumulate hazard function, one could (in principle) use the survival function to derive $x_u$. The survival function is $S_X (x)=exp[-\Lambda(x)]$. The survival probability that is consistent with u=0.35 is $S_X (x_u )=1-0.35=0.65$.  
+Since the survival function can be derived unambiguously from the cumulative hazard function, one could (in principle) use the survival function to derive $x_u$. The survival function is $S_X (x)=exp[-\Lambda(x)]$. The survival probability that is consistent with u=0.35 is $S_X (x_u )=1-0.35=0.65$.  
 
 ```{r fig2, fig.height = 5, fig.width = 5,fig.align = "center"}
 x <- t

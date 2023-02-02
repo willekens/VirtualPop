@@ -12,10 +12,11 @@
 #' @return Vector of differences between cumulative hazard and -log(uu) for
 #' different values of t.
 #' @author Frans Willekens
-#' @seealso Functions H_wp and r.pw_exp
+#' @seealso Functions H_pw and r.pw_exp
 #' @examples
-#' 
-#' ## Not run
+#' breakpoints <- c(0, 10, 20, 30, 60)
+#' rates <- c(0.01,0.02,0.04,0.15)
+#' z <- pw_root (t= c(10,18.3,23.6,54.7),breakpoints,rates,uu=0.43)
 #' 
 #' @export pw_root
 pw_root <-

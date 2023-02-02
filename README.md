@@ -1,3 +1,15 @@
+ <!-- badges: start -->
+  
+  [![General badge](https://img.shields.io/badge/Field-Demography-red.svg)](https://shields.io/)
+  [![Generic badge](https://img.shields.io/badge/DATA-HMD/HFD-blue.svg)](https://shields.io/)
+  [![](https://www.r-pkg.org/badges/version/VirtualPop?color=orange)](https://cran.r-project.org/package=VirtualPop)
+  [![General badge](https://img.shields.io/badge/Published_on_CRAN-June_23_2022-red.svg)](https://shields.io/)
+  [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#stablel)
+  [![CircleCI build status](https://img.shields.io/circleci/build/github/jupyterhub/jupyterhub?logo=circleci)](https://circleci.com/gh/jupyterhub/jupyterhub)
+  [![](http://cranlogs.r-pkg.org/badges/grand-total/VirtualPop?color=blue)](https://cran.r-project.org/package=VirtualPop)
+<!-- badges: end -->
+
+
 # VirtualPop
 $VirtualPop$ generates a virtual population from demographic data. The demographic data are death rates (mortality rates) by age and sex, and birth rates (fertility rates) by age and birth order (parity). The current version of VirtualPop uses rates downloaded from the Human Mortality Database (HMD) and the Human Fertility Database (HFD). 
 
@@ -22,7 +34,11 @@ In the $doc$ folder, you find
 
 The companion package $Families$ extract family relationships from the multi-generation virtual population. These relationships are the basis for the computation of kinship indicators. Areas of application include kinship networks, the demography of grandparenthood, the demography of sandwich generations (double burden of child care and parental care), and perspectives of children on population. 
 
-You should be able to install VirtualPop using the following R code: 
+To install the package from CRAN, type in the R window:
+
+        install.packages ("VirtualPop")
+
+To install the package from GitHub, use:
 
         library(devtools)
         devtools::install_github("willekens/VirtualPop")

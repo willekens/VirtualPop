@@ -1,4 +1,4 @@
-#' Computes comulative hazard at duration t.
+#' Computes cumulative hazard at duration t.
 #' 
 #' Computes cumulative hazard at duration t from age-specific demographic
 #' rates.
@@ -13,11 +13,15 @@
 #' @seealso Function H_pw called by pw_root, which is called by r_pw_exp.
 #' @examples
 #' 
-#' 
-#' ## Not Run
-#' ## data(rates)
-#' ## H_wp(t, breakpoints, rates) 
-#' ## End Not Run
+#' breakpoints <- c(0, 10, 20, 30, 60)
+#' rates <- c(0.01,0.02,0.04,0.15)
+#' z <- H_pw(t=0:40, breakpoints=breakpoints, rates=rates)
+#'
+#'
+#' utils::data(rates)
+#' ages <- as.numeric(rownames(rates$ASDR))
+#' breakpoints <- c(ages,120)
+#' zz <- H_pw(t=ages, breakpoints=breakpoints, rates=rates$ASDR[,1])
 #' 
 #' 
 #' @export H_pw

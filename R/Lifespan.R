@@ -13,16 +13,15 @@
 #' @examples
 #' 
 #' 
-#' data(dataLH)
-#' data(rates)
-#' z = Lifespan (dataLH,ASDR=rates$ASDR)
+#' utils::data(dataLH)
+#' utils::data(rates)
+#' z <- Lifespan (dataLH[1:5,],ASDR=rates$ASDR)
 #' 
 #' 
 #' @export Lifespan
 Lifespan <-
 function (data, ASDR) 
 {
-    set.seed(1)
     z <- table(data$sex)
     nmales <- z[1]
     nfemales <- z[2]
