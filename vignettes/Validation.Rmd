@@ -6,8 +6,10 @@ output:
   pdf_document: default
   html_document: default
 bibliography: References.bib
-vignette: "%\\VignetteIndexEntry{Validation of the simulation} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
-  \n"
+vignette: |
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Validation of the simulation} 
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 ## Introduction
 

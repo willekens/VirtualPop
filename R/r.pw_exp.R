@@ -10,8 +10,8 @@
 #' @return Vector of waiting times, drawn from piecewise-exponential survival
 #' function.
 #' @author Frans Willekens
+#' @importFrom stats runif uniroot
 #' @examples
-#' 
 #' 
 #' breakpoints <- c(0, 10, 20, 30, 60)
 #' rates <- c(0.01,0.02,0.04,0.15)

@@ -1,13 +1,13 @@
 Package: VirtualPop
 Type: Package
 Title: Simulation of Populations by Sampling Waiting-Time Distributions
-Version: 1.0.2
+Version: 1.0.3
 Imports: msm,HMDHFDplus
 Suggests: knitr, rmarkdown,ggplot2,foreign,lubridate,xml2,remotes
 BuildResaveData: best
 VignetteBuilder: knitr
 LazyData: true
-Date: 2022-06-23
+Date: 2023-02-02
 Authors@R: c(person("Frans", "Willekens", , "willekens@nidi.nl", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6125-0212")),
    	   person("Tim", "Riffe", role = "ctb", 
@@ -19,4 +19,4 @@ NeedsCompilation: no
 Depends: R (>= 3.5.0)
 Encoding: UTF-8
 BugReports: https://github.com/willekens/VirtualPop/issues
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3

@@ -22,7 +22,6 @@ package msm and uniroot of base R
 }
 \examples{
 
-
 utils::data(dataLH)
 utils::data(rates)
 z <- Lifespan (dataLH[1:5,],ASDR=rates$ASDR)

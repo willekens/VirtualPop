@@ -10,8 +10,8 @@
 #' @return data: data frame 'dataLH' with date of death and age of death
 #' completed.
 #' @author Frans Willekens
+#' @importFrom stats aggregate
 #' @examples
-#' 
 #' 
 #' utils::data(dataLH)
 #' utils::data(rates)

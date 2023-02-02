@@ -50,7 +50,6 @@ the virtual population and the real population must have the same censoring.
 }
 \examples{
 
-
 # The object rates is produced by the function GetRates.
 utils::data(rates)
 dLH <- GetGenerations (rates=rates,ncohort=100,ngen=4)
