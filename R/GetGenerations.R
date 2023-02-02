@@ -25,8 +25,8 @@
 #' fertility histories. The object 'dataLH' has two attributes: (a) the
 #' calendar year of period rates and (b) the country}
 #' @author Frans Willekens
+#' @importFrom stats aggregate rbinom runif
 #' @examples
-#' 
 #' 
 #' # The object rates is produced by the function GetRates.
 #' utils::data(rates)

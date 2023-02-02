@@ -11,6 +11,7 @@
 #' and fertility history of egos and (b) children data frame
 #' @author Frans Willekens
 #' @export Children
+#' @importFrom stats rbinom
 #' @examples
 #' utils::data(dataLH)
 #' utils::data(rates)

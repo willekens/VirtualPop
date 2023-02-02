@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 VirtualPop.Rproj
 ^doc$
+^Meta$
+.github

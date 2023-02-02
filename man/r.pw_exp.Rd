@@ -23,7 +23,6 @@ Takes n random draws from a piecewise-constant exponential distribution.
 }
 \examples{
 
-
 breakpoints <- c(0, 10, 20, 30, 60)
 rates <- c(0.01,0.02,0.04,0.15)
 pw_sample <- r.pw_exp (n=10, breakpoints, rates=rates)
