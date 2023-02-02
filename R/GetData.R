@@ -23,7 +23,7 @@ GetData <- function(country,user,pw_HMD,pw_HFD)
 requireNamespace("HMDHFDplus")
 
 # help function to list the available countries
-countries <- HMDHFDplus::getHMDcountries()
+countries <- HMDHFDplus::getHMDcountries()$CNTRY
 
 # ====================  Get data from HMD and HFD: data_raw  =================
 #country <- "USA"
