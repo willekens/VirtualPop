@@ -1,3 +1,9 @@
+## ----setup, include = FALSE---------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
 ## -----------------------------------------------------------------------------
 A <- matrix(c(   0.0,0.10,0.05,        
                  0.07,0.0,0.03,
@@ -63,7 +69,7 @@ d$x_D[d$sex=="Female"] <- msm::rpexp(n=nfemales,rate=rates$ASDR[,"Females"],t=ag
 d$ddated <- d$bdated+d$x_D
 
 ## ----results="hide"-----------------------------------------------------------
-d <- VirtualPop::Partnership(dataLH=d)
+d <- VirtualPop::Partnership(dLH=d)
 
 ## -----------------------------------------------------------------------------
 head(d)
@@ -79,17 +85,17 @@ head(dch1$data)
 head(dch1$dch)
 
 ## ----results="hide"-----------------------------------------------------------
-d2 <- VirtualPop::Partnership (dataLH=dch1$dch)
+d2 <- VirtualPop::Partnership (dLH=dch1$dch)
 
 ## ----warning=FALSE------------------------------------------------------------
 dch2 <-  VirtualPop::Children(dat0=d2,rates=rates)
 
 ## ----results="hide"-----------------------------------------------------------
-d3 <- VirtualPop::Partnership (dataLH=dch2$dch)
+d3 <- VirtualPop::Partnership (dLH=dch2$dch)
 
 ## ----warning=FALSE------------------------------------------------------------
 dch3 <-  VirtualPop::Children(dat0=d3,rates=rates)
-d4 <- VirtualPop::Partnership (dataLH=dch3$dch)
+d4 <- VirtualPop::Partnership (dLH=dch3$dch)
 dch4 <-  VirtualPop::Children(dat0=d4,rates=rates)
 d4 <- dch4$data[,1:which (colnames(dch4$data)=="nch")]
 
