@@ -1,10 +1,10 @@
 Package: VirtualPop
 Type: Package
 Title: Simulation of Populations by Sampling Waiting-Time Distributions
-Version: 1.0.3
+Version: 1.0.4
 Imports: 
   msm,
-  HMDHFDplus (>= 2.0.1)
+  HMDHFDplus (>= 2.0.3)
 Suggests: knitr, rmarkdown,ggplot2,foreign,lubridate,xml2,remotes
 BuildResaveData: best
 VignetteBuilder: knitr
